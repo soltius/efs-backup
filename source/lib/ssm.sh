@@ -56,16 +56,27 @@ fi
 # updating dynamo db with backup meta-data
 # parameters : [_nofs, _nfst, _tfs, _ttfs]
 #
+
+re='^[0-9]+$'
+
 _nofs=$(cat /tmp/efs-backup.log | grep 'Number of files' | awk '{nofs += $7} END {print nofs}')
 echo "-- $(date -u +%FT%T) -- Number of files: $_nofs"
 
 _nfst=$(cat /tmp/efs-backup.log | grep 'Number of files transferred' | awk '{nfst += $8} END {print nfst}')
+if ! [[ $_nfst =~ $re ]] ; then
+   echo "error: _nfst Not a number"
+   _nfst="0"
+fi
 echo "-- $(date -u +%FT%T) -- Number of files transferred: $_nfst"
 
 _tfs=$(cat /tmp/efs-backup.log | grep 'Total file size' | awk '{tfs += $7} END {print tfs}')
 echo "-- $(date -u +%FT%T) -- Total file size: $_tfs"
 
 _ttfs=$(cat /tmp/efs-backup.log | grep 'Total transferred file size' | awk '{ttfs += $8} END {print ttfs}')
+if ! [[ $_nfst =~ $re ]] ; then
+   echo "error: _ttfs Not a number"
+   _ttfs="0"
+fi
 echo "-- $(date -u +%FT%T) -- Total transferred file size: $_ttfs"
 
 #
